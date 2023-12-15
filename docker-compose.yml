@@ -32,14 +32,49 @@ services:
       - zookeeper
     networks:
       - socialmediapost
+  
+  mongodb:
+    container_name: mongodb_container
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/data/db
+    networks:
+      - socialmediapost
+  
+  db_mac_m1:
+    image: mcr.microsoft.com/azure-sql-edge
+    container_name: mssql_mac_m1
+    environment:
+      MSSQL_SA_PASSWORD: "socialPassword1234"
+      MSSQL_PID: "Developer"
+      MSSQL_USER: "SA"
+      ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    networks:
+      - socialmediapost
       
 volumes:
   zookeeper_data:
     driver: local
   kafka_data:
     driver: local
+  mongodb_data_container:
+    driver: local
+  mssql_data:
+    driver: local
 
 networks:
   socialmediapost:
     driver: bridge
+
+# networks: # when using this do not set networks for the all services
+  # default:
+      # name: mydockernetwork
    
